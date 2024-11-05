@@ -1,4 +1,3 @@
-[9:16 PM] Allen Vuong
 pipeline {
     agent any
  
