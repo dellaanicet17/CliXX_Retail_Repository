@@ -15,8 +15,7 @@ pipeline {
         withCredentials([string(credentialsId: 'SONAR_TOKEN', variable: 'SONAR_TOKEN')]){
         withSonarQubeEnv('SonarQubeScanner') {
           sh " ${scannerHome}/bin/sonar-scanner \
-          -Dsonar.projectKey=CliXX-App   \
-          -Dsonar.sourceEncoding=UTF-8 \
+          -Dsonar.projectKey=CliXX-APP-DELLA   \
           -Dsonar.login=${SONAR_TOKEN} "
         }
         }
