@@ -16,6 +16,7 @@ pipeline {
         withSonarQubeEnv('SonarQubeScanner') {
           sh " ${scannerHome}/bin/sonar-scanner \
           -Dsonar.projectKey=CliXX-App   \
+          -Dsonar.sourceEncoding=UTF-8 \
           -Dsonar.login=${SONAR_TOKEN} "
         }
         }
