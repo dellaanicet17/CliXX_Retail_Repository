@@ -28,7 +28,7 @@ pipeline {
             steps {
                 script {
                     try {
-                        timeout(time: 1, unit: 'MINUTES') { // Adjusted timeout duration
+                        timeout(time: 3, unit: 'MINUTES') {
                             def qualityGateResult = waitForQualityGate abortPipeline: false
                             echo "Quality Gate check result: ${qualityGateResult}"
                         }
@@ -42,7 +42,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    dockerHome = tool 'docker'
+                    dockerHome = tool 'docker-inst'
                     sh "${dockerHome}/bin/docker build . -t clixx-image:$VERSION"
                 }
             }
@@ -61,50 +61,50 @@ pipeline {
             }
         }
  
-        // The following section is commented out. Uncomment if required
-        // stage('Restore CliXX Database') {
-        //     steps {
-        //         script {
-        //             sh '''
-        //             # Activate the virtual environment and run the playbook
-        //             python3 -m venv python3-virtualenv
-        //             source python3-virtualenv/bin/activate
-        //             pip install --upgrade pip
-        //             pip install boto boto3 botocore
-        //             ansible-galaxy collection install amazon.aws
-        //             ANSIBLE_COLLECTIONS_PATHS=python3-virtualenv/lib/python3.*/site-packages/ansible_collections ansible-playbook /home/ec2-user/.jenkins/workspace/Infra_Deployment_Pipelines/Microservices_Image_CI_Pipeline/CliXX_Image_Deployment/deploy_db_ansible/deploy_db.yml -i localhost,
-        //             deactivate
-        //             '''
-        //         }
-        //     }
-        // }
+         //The following section is commented out. Uncomment if required
+         stage('Restore CliXX Database') {
+             steps {
+                 script {
+                     sh '''
+                     # Activate the virtual environment and run the playbook
+                     python3 -m venv python3-virtualenv
+                     source python3-virtualenv/bin/activate
+                     pip install --upgrade pip
+                     pip install boto boto3 botocore
+                     ansible-galaxy collection install amazon.aws
+                     ANSIBLE_COLLECTIONS_PATHS=python3-virtualenv/lib/python3.*/site-packages/ansible_collections ansible-playbook /home/ec2-user/.jenkins/workspace/Infra_Deployment_Pipelines/Microservices_Image_CI_Pipeline/CliXX_Image_Deployment/deploy_db_ansible/deploy_db.yml -i localhost,
+                     deactivate
+                     '''
+                 }
+             }
+         }
  
-        stage('Restore CliXX Database') {
-            steps {
-                script {
-                    sh '''
-                    # Ensure Python 3.8 is available
-                    python3.8 --version || exit 1  # Exit if Python 3.8 is not found
+        //stage('Restore CliXX Database') {
+        //    steps {
+        //        script {
+        //            sh '''
+        //            # Ensure Python 3.8 is available
+        //            python3.8 --version || exit 1  # Exit if Python 3.8 is not found
  
-                    # Create and activate virtual environment with Python 3.8
-                    python3.8 -m venv python3-virtualenv
-                    source python3-virtualenv/bin/activate
+        //            # Create and activate virtual environment with Python 3.8
+        //            python3.8 -m venv python3-virtualenv
+        //            source python3-virtualenv/bin/activate
  
-                    # Upgrade pip and install necessary packages
-                    pip install --upgrade pip
+        //            # Upgrade pip and install necessary packages
+        //            pip install --upgrade pip
  
-                    # Install the latest version of the amazon.aws collection
-                    ansible-galaxy collection install amazon.aws --upgrade
+        //            # Install the latest version of the amazon.aws collection
+        //            ansible-galaxy collection install amazon.aws --upgrade
  
-                    # Run the Ansible playbook
-                    ansible-playbook /home/ec2-user/.jenkins/workspace/Infra_Deployment_Pipelines/Microservices_Image_CI_Pipeline/CliXX_Image_Deployment/deploy_db_ansible/deploy_db2.yml -i localhost,
+        //            # Run the Ansible playbook
+        //            ansible-playbook /home/ec2-user/.jenkins/workspace/Infra_Deployment_Pipelines/Microservices_Image_CI_Pipeline/CliXX_Image_Deployment/deploy_db_ansible/deploy_db2.yml -i localhost,
  
-                    # Deactivate virtual environment
-                    deactivate
-                    '''
-                }
-            }
-        }
+        //            # Deactivate virtual environment
+        //            deactivate
+        //            '''
+        //        }
+        //    }
+        //}
  
         stage('Configure DB Instance') {
             steps {
@@ -146,7 +146,7 @@ def getSonarPath() {
 }
  
 def getDockerPath() {
-    def DockerHome = tool name: 'docker', type: 'dockerTool'
+    def DockerHome = tool name: 'docker-inst', type: 'dockerTool'
     return DockerHome
 }
  
