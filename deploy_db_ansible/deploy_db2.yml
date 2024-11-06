@@ -1,0 +1,27 @@
+- name: Restore RDS Database from Snapshot
+  hosts: localhost
+  connection: local
+  vars:
+    instance_name: wordpressdbclixx
+    db_snapshot: dbsnapshot
+    security_group: sg-0f113ba382d174ce5
+    db_snapshot_identifier: arn:aws:rds:us-east-1:816069170174:snapshot:dbsnapshot
+    region: us-east-1
+    db_instance_class: db.m7g.large
+
+  collections:
+    - amazon.aws
+
+  tasks:
+    - name: Restore DB from snapshot
+      amazon.aws.rds_instance:
+        db_instance_identifier: '{{ instance_name }}'
+        creation_source: snapshot
+        db_instance_class: '{{ db_instance_class }}'
+        snapshot_identifier: '{{ db_snapshot }}'
+        skip_final_snapshot: true
+        backup_retention_period: 0
+        region: '{{ region }}'
+        engine: mysql
+        vpc_security_group_ids: '{{ security_group }}'
+        wait: yes
