@@ -1,4 +1,3 @@
-
 pipeline {
     agent any
     tools {
@@ -183,5 +182,3 @@ def getDockerPath() {
     def DockerHome = tool name: 'docker-inst', type: 'dockerTool'
     return DockerHome
 }
-
- 
