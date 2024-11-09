@@ -3,9 +3,8 @@
     hosts: localhost
     connection: local
     vars:
-      instance_id: wordpressdbclixxjenkins
+      instance_id: "{{ lookup('env', 'INSTANCE_ID') }}"
     tasks:
-
       - name: remove a db instance without taking a final snapshot
         rds_instance:
             id: "{{ instance_id }}"
